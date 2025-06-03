@@ -14,11 +14,36 @@ function processRow(row) {
     return;
   }
 
-  const secondColumnCell = cells[1];
+  const originalPositionCell = cells[1];
   const lastColumnCell = cells[cells.length - 1];
-  const clonedCell = secondColumnCell.cloneNode(true);
+  const newCell = originalPositionCell.cloneNode(false);
 
-  row.insertBefore(clonedCell, lastColumnCell);
+  if (
+    row.tagName.toLowerCase() === 'tr' &&
+    cells[0].tagName.toLowerCase() === 'td'
+  ) {
+    const ageCell = cells[3];
+    const salaryCell = cells[4];
+
+    const age = parseInt(ageCell.textContent);
+    const salaryText = salaryCell.textContent.replace(/[$,]/g, '');
+    const salary = parseInt(salaryText);
+
+    if (!isNaN(age) && !isNaN(salary)) {
+      const sum = age + salary;
+
+      newCell.textContent = sum.toLocaleString();
+    } else {
+      newCell.textContent = 'N/A';
+    }
+  } else if (
+    row.tagName.toLowerCase() === 'tr' &&
+    cells[0].tagName.toLowerCase() === 'th'
+  ) {
+    newCell.textContent = originalPositionCell.textContent;
+  }
+
+  row.insertBefore(newCell, lastColumnCell);
 }
 
 const theadRow = thead.querySelector('tr');
